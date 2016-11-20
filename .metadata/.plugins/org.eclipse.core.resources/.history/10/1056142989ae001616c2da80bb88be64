@@ -1,0 +1,81 @@
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class Game extends Canvas implements Runnable {
+
+	private static final int WIDTH = 320;
+	private static final int HEIGHT = WIDTH / 12 * 9;
+	private static final int SCALE = 2;
+	public final String TITLE = "WildHacks Game!!!";
+
+	private boolean running = false;
+	private Thread thread;
+
+	private synchronized void start() {
+		if (running) {
+			return;
+		}
+		running = true;
+		thread = new Thread(this);
+		thread.start();
+	}
+
+	private synchronized void stop() {
+		if (!running) {
+			return;
+		}
+		running = false;
+		try {
+			thread.join();
+		} catch (InterruptedException exception) {
+			exception.printStackTrace();
+		}
+		System.exit(1);
+	}
+
+	public static void main(String args[]) {
+//		Game game = new Game();
+		JFrame frame = new JFrame(TITLE);
+
+		frame.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		frame.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		frame.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+
+		
+//		frame.setSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+
+		JButton button = new JButton("Do NOT Press");
+		frame.add(button);
+
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("The Button is Pressed!!!");
+			}
+		});
+//		frame.add(game);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setResizable(false);
+//		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+
+//		game.start();
+	}
+
+	@Override
+	public void run() {
+		while (running) {
+			// stuff
+			System.out.println("Hello!");
+		}
+		stop();
+	}
+
+}

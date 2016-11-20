@@ -1,0 +1,79 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.io.*;
+
+import javax.swing.*;
+
+public class CircleButton extends JButton {
+	public static int lineNum = 0;
+	public static boolean changeBack = false;
+	
+	public CircleButton(String label) {
+		super(label);
+
+		Dimension size = getPreferredSize();
+		size.width = size.height = Math.max(size.width, size.height);
+		setPreferredSize(size);
+
+		setContentAreaFilled(false);
+	}
+
+	public static String changeText = "Good Morning";
+
+	protected void paintComponent(Graphics g) {
+		if (getModel().isArmed()) {
+			g.setColor(Color.LIGHT_GRAY);
+		} else {
+			g.setColor(getBackground());
+		}
+		g.fillOval(0, 0, getSize().width - 1, getSize().height - 1);
+		super.paintComponent(g);
+
+	}
+
+	protected void paintBorder(Graphics g) {
+		g.setColor(getForeground());
+		g.drawOval(0, 0, getSize().width - 1, getSize().height - 1);
+	}
+
+	public static void main(String[] args) throws FileNotFoundException {
+		String storyLine = "story.txt";
+		Scanner story = new Scanner(new File(storyLine));
+		JButton button = new CircleButton(changeText);
+//		button.setBackground(Color.white);
+		// Create a frame in which to show the button.
+		JFrame frame = new JFrame();
+		frame.getContentPane().setBackground(Color.black);
+		frame.getContentPane().add(button);
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(changeBack) {
+					changeBack = false;
+					button.setBackground(Color.WHITE);
+				}
+				lineNum++;
+				if (story.hasNextLine()) {
+					changeText = (story.nextLine());
+					button.setText(changeText);
+				}
+				switch(Integer.toString(lineNum)) {
+				case "3":
+					button.setBackground(Color.GREEN);
+					changeBack = true;
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		frame.setSize(500, 500);
+		frame.setVisible(true);
+	}
+};

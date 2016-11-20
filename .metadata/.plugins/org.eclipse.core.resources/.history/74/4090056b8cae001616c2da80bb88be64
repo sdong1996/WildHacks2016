@@ -1,0 +1,126 @@
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+public class Game extends JButton implements Runnable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final int WIDTH = 320;
+	private static final int HEIGHT = WIDTH / 12 * 9;
+	private static final int SCALE = 2;
+	public final static String TITLE = "WildHacks Game!!!";
+
+	private boolean running = false;
+	private Thread thread;
+
+	private synchronized void start() {
+		if (running) {
+			return;
+		}
+		running = true;
+		thread = new Thread(this);
+		thread.start();
+	}
+
+	private synchronized void stop() {
+		if (!running) {
+			return;
+		}
+		running = false;
+		try {
+			thread.join();
+		} catch (InterruptedException exception) {
+			exception.printStackTrace();
+		}
+		System.exit(1);
+	}
+
+	public static void main(String args[]) {
+//		Game game = new Game();
+		JFrame frame = new JFrame(TITLE);
+
+		frame.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		frame.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		frame.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+
+		protected void paintComponent(Graphics g) {
+			if (getModel().isPressed()) {
+				g.setColor(pressedBackgroundColor);
+			} else if (getModel().isRollover()) {
+				g.setColor(hoverBackgroundColor);
+			} else {
+				g.setColor(getBackground());
+			}
+			g.fillRect(0, 0, getWidth(), getHeight());
+			super.paintComponent(g);
+		}
+
+		@Override
+		public void setContentAreaFilled(boolean b) {
+		}
+
+		public Color getHoverBackgroundColor() {
+			return hoverBackgroundColor;
+		}
+
+		public void setHoverBackgroundColor(Color hoverBackgroundColor) {
+			this.hoverBackgroundColor = hoverBackgroundColor;
+		}
+
+		public Color getPressedBackgroundColor() {
+			return pressedBackgroundColor;
+		}
+
+		public void setPressedBackgroundColor(Color pressedBackgroundColor) {
+			this.pressedBackgroundColor = pressedBackgroundColor;
+		}
+	}
+//		frame.setSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+
+		JButton button = new JButton("Do NOT Press");
+		button.setForeground(new Color(0, 135, 200).brighter());
+		button.setHorizontalTextPosition(SwingConstants.CENTER);
+		button.setBorder(null);
+		button.setBackground(new Color(3, 59, 90));
+		button.setHoverBackgroundColor(new Color(3, 59, 90).brighter());
+		button.setPressedBackgroundColor(Color.PINK);
+		frame.add(button);
+
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("The Button is Pressed!!!");
+			}
+		});
+//		frame.add(game);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setResizable(false);
+//		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+
+//		game.start();
+	}
+
+	@Override
+	public void run() {
+		while (running) {
+			// stuff
+			System.out.println("Hello!");
+		}
+		stop();
+	}
+
+}
